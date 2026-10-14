@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <rect width="48" height="48" rx="12" fill="#15803d"/>
+  <!-- Sun rays / solar top -->
+  <circle cx="36" cy="12" r="5" fill="#f59e0b"/>
+  <!-- Cold container box -->
+  <rect x="8" y="16" width="32" height="24" rx="4" fill="#ffffff"/>
+  <!-- Door / modular line -->
+  <rect x="14" y="20" width="10" height="20" rx="1" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+  <!-- Temperature/cooling snowflake / leaf motif -->
+  <path d="M29 23L33 27M33 23L29 27M31 21V29" stroke="#0284c7" stroke-width="2" stroke-linecap="round"/>
+  <!-- Fresh leaf -->
+  <path d="M19 25C19 25 21 23 21 21C19 21 17 23 17 25Z" fill="#16a34a"/>
+</svg>
