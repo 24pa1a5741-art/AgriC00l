@@ -4,11 +4,16 @@ import {
   Snowflake,
   Menu,
   X,
-  User as UserIcon,
   LogOut,
   LayoutDashboard,
   ShieldCheck,
   ChevronRight,
+  Bell,
+  Activity,
+  Truck,
+  ShoppingBag,
+  TrendingUp,
+  KeyRound,
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import type { ViewType } from '../context/AppContext';
@@ -19,17 +24,24 @@ export const Navbar: React.FC = () => {
     setCurrentView, 
     currentUser, 
     logout, 
-    setAuthModalOpen 
+    setAuthModalOpen,
+    setProfileModalOpen,
+    notifications,
+    markNotificationRead,
   } = useApp();
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [notifMenuOpen, setNotifMenuOpen] = useState(false);
+
+  const unreadNotifsCount = notifications.filter((n) => !n.read).length;
 
   const navItems: { label: string; view: ViewType; icon?: React.ReactNode }[] = [
     { label: 'Home', view: 'landing' },
     { label: 'How It Works', view: 'how-it-works' },
-    { label: 'Pricing', view: 'pricing' },
-    { label: 'Book Storage', view: 'book' },
-    { label: 'Track Booking', view: 'tracking' },
-    { label: 'About', view: 'about' },
+    { label: 'Chamber IoT', view: 'monitoring', icon: <Activity className="w-3.5 h-3.5 text-emerald-500" /> },
+    { label: 'Fleet Track', view: 'tracking', icon: <Truck className="w-3.5 h-3.5 text-amber-500" /> },
+    { label: 'Produce Board', view: 'marketplace', icon: <ShoppingBag className="w-3.5 h-3.5 text-sky-500" /> },
+    { label: 'ROI Calculator', view: 'pricing', icon: <TrendingUp className="w-3.5 h-3.5 text-purple-500" /> },
   ];
 
   const handleNavClick = (view: ViewType) => {
@@ -43,12 +55,12 @@ export const Navbar: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           
-          {/* Logo & Brand Identity */}
+          {/* Brand Logo & Tagline */}
           <div 
             onClick={() => handleNavClick('landing')}
             className="flex items-center gap-3 cursor-pointer group"
           >
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-600 to-green-700 flex items-center justify-center text-white shadow-md shadow-emerald-700/20 group-hover:scale-105 transition-transform">
+            <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-emerald-600 to-green-700 flex items-center justify-center text-white shadow-md shadow-emerald-700/20 group-hover:scale-105 transition-transform">
               <div className="relative">
                 <Snowflake className="w-6 h-6 text-emerald-100" />
                 <Sun className="w-3.5 h-3.5 text-amber-300 absolute -top-1 -right-1 animate-pulse" />
@@ -56,7 +68,7 @@ export const Navbar: React.FC = () => {
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <span className="text-2xl font-extrabold tracking-tight text-slate-900 group-hover:text-emerald-700 transition-colors">
+                <span className="text-2xl font-black tracking-tight text-slate-900 group-hover:text-emerald-700 transition-colors">
                   Agri<span className="text-emerald-600">Cool</span>
                 </span>
                 <span className="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-1.5 py-0.5 rounded tracking-wide uppercase">
@@ -70,65 +82,98 @@ export const Navbar: React.FC = () => {
           </div>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-1 text-sm font-semibold text-slate-600">
+          <nav className="hidden lg:flex items-center gap-1 text-xs font-bold text-slate-600">
             {navItems.map((item) => (
               <button
                 key={item.view}
                 onClick={() => handleNavClick(item.view)}
-                className={`px-3.5 py-2 rounded-lg transition-all ${
+                className={`px-3 py-2 rounded-xl transition-all flex items-center gap-1.5 ${
                   currentView === item.view
-                    ? 'text-emerald-700 bg-emerald-50 font-bold'
+                    ? 'text-emerald-800 bg-emerald-50 font-black'
                     : 'hover:text-slate-900 hover:bg-slate-100/70'
                 }`}
               >
-                {item.label}
+                {item.icon}
+                <span>{item.label}</span>
               </button>
             ))}
 
-            {/* Storage Dashboard quick access */}
             <button
               onClick={() => handleNavClick('dashboard')}
-              className={`px-3 py-2 rounded-lg transition-all flex items-center gap-1.5 ${
+              className={`px-3 py-2 rounded-xl transition-all flex items-center gap-1.5 ${
                 currentView === 'dashboard'
-                  ? 'text-emerald-700 bg-emerald-50 font-bold'
+                  ? 'text-emerald-800 bg-emerald-50 font-black'
                   : 'hover:text-slate-900 hover:bg-slate-100/70'
               }`}
             >
-              <LayoutDashboard className="w-4 h-4 text-emerald-600" />
-              <span>Dashboard</span>
-            </button>
-
-            {/* Admin ops view */}
-            <button
-              onClick={() => handleNavClick('admin')}
-              className={`px-2.5 py-1.5 rounded-md text-xs font-medium border border-slate-200 transition-all ml-1 ${
-                currentView === 'admin'
-                  ? 'text-emerald-700 bg-emerald-50 border-emerald-300'
-                  : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50'
-              }`}
-              title="Hub Operations View"
-            >
-              Hub Ops
+              <LayoutDashboard className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Storage Cockpit</span>
             </button>
           </nav>
 
           {/* Right Action Area */}
-          <div className="hidden sm:flex items-center gap-3">
-            {currentUser ? (
-              <div className="flex items-center gap-2 bg-slate-100/80 px-2.5 py-1.5 rounded-lg border border-slate-200/80">
-                <button
-                  onClick={() => handleNavClick('dashboard')}
-                  className="flex items-center gap-2 text-left hover:opacity-85"
-                >
-                  <div className="w-8 h-8 rounded-full bg-emerald-600 text-white font-bold text-xs flex items-center justify-center">
-                    {currentUser.name.charAt(0)}
+          <div className="hidden sm:flex items-center gap-2.5">
+            
+            {/* Notification Bell Menu */}
+            <div className="relative">
+              <button
+                onClick={() => setNotifMenuOpen(!notifMenuOpen)}
+                className="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition-colors relative"
+                aria-label="Alerts"
+              >
+                <Bell className="w-4 h-4" />
+                {unreadNotifsCount > 0 && (
+                  <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-white" />
+                )}
+              </button>
+
+              {/* Notification Popover */}
+              {notifMenuOpen && (
+                <div className="absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-slate-200 p-3 z-50 animate-in fade-in space-y-2">
+                  <div className="flex items-center justify-between border-b border-slate-100 pb-2 px-1">
+                    <span className="text-xs font-bold text-slate-800">Telemetry & Activity Alerts</span>
+                    <span className="text-[10px] text-slate-400">{notifications.length} alerts</span>
                   </div>
+                  <div className="space-y-1.5 max-h-64 overflow-y-auto">
+                    {notifications.map((n) => (
+                      <div
+                        key={n.id}
+                        onClick={() => markNotificationRead(n.id)}
+                        className={`p-2.5 rounded-xl cursor-pointer text-xs transition-colors ${
+                          n.read ? 'bg-slate-50 text-slate-500' : 'bg-emerald-50 text-slate-800 font-semibold border border-emerald-100'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between text-[10px] text-slate-400 mb-0.5">
+                          <span>{n.title}</span>
+                          <span>{n.timestamp}</span>
+                        </div>
+                        <p className="text-[11px] leading-tight text-slate-600">{n.description}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* User Profile Pill / Login Trigger */}
+            {currentUser ? (
+              <div className="flex items-center gap-1.5 bg-slate-100 px-2.5 py-1.5 rounded-xl border border-slate-200">
+                <button
+                  onClick={() => setProfileModalOpen(true)}
+                  className="flex items-center gap-2 text-left hover:opacity-85"
+                  title="View Digital Pass & Credentials"
+                >
+                  <img
+                    src={currentUser.avatarUrl || 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=256'}
+                    alt={currentUser.name}
+                    className="w-8 h-8 rounded-lg object-cover border border-slate-300"
+                  />
                   <div>
-                    <div className="text-xs font-bold text-slate-800 leading-tight">
-                      {currentUser.name}
+                    <div className="text-xs font-bold text-slate-900 leading-tight">
+                      {currentUser.name.split(' ')[0]}
                     </div>
-                    <div className="text-[10px] text-emerald-700 font-medium">
-                      {currentUser.role} • {currentUser.location}
+                    <div className="text-[10px] text-emerald-700 font-bold uppercase">
+                      {currentUser.role}
                     </div>
                   </div>
                 </button>
@@ -143,19 +188,20 @@ export const Navbar: React.FC = () => {
             ) : (
               <button
                 onClick={() => setAuthModalOpen(true)}
-                className="text-sm font-semibold text-slate-700 hover:text-emerald-700 px-3 py-2 rounded-lg transition-colors flex items-center gap-1.5"
+                className="text-xs font-bold text-slate-700 hover:text-emerald-700 px-3 py-2 bg-slate-100 hover:bg-emerald-50 rounded-xl transition-colors flex items-center gap-1.5"
               >
-                <UserIcon className="w-4 h-4" />
-                <span>Login</span>
+                <KeyRound className="w-3.5 h-3.5 text-emerald-600" />
+                <span>Credentials Login</span>
               </button>
             )}
 
+            {/* Book Storage Primary CTA */}
             <button
               onClick={() => handleNavClick('book')}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm px-5 py-2.5 rounded-xl shadow-md shadow-emerald-600/25 transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-2"
+              className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-md shadow-emerald-600/25 transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-1.5"
             >
               <span>Book Storage</span>
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-3.5 h-3.5" />
             </button>
           </div>
 
@@ -163,9 +209,9 @@ export const Navbar: React.FC = () => {
           <div className="flex items-center gap-2 lg:hidden">
             <button
               onClick={() => handleNavClick('book')}
-              className="bg-emerald-600 text-white text-xs font-semibold px-3 py-2 rounded-lg sm:hidden"
+              className="bg-emerald-600 text-white text-xs font-bold px-3 py-2 rounded-lg sm:hidden shadow-xs"
             >
-              Book Now
+              Book
             </button>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -182,24 +228,38 @@ export const Navbar: React.FC = () => {
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
         <div className="lg:hidden bg-white border-b border-slate-200 px-4 pt-2 pb-6 space-y-2 shadow-xl animate-in slide-in-from-top-2">
-          {currentUser && (
-            <div className="flex items-center justify-between p-3 bg-emerald-50 rounded-xl mb-3 border border-emerald-100">
+          {currentUser ? (
+            <div 
+              onClick={() => {
+                setProfileModalOpen(true);
+                setMobileMenuOpen(false);
+              }}
+              className="flex items-center justify-between p-3 bg-emerald-50 rounded-2xl mb-3 border border-emerald-100 cursor-pointer"
+            >
               <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-full bg-emerald-600 text-white font-bold flex items-center justify-center">
-                  {currentUser.name.charAt(0)}
-                </div>
+                <img
+                  src={currentUser.avatarUrl}
+                  alt={currentUser.name}
+                  className="w-10 h-10 rounded-xl object-cover border border-emerald-300"
+                />
                 <div>
                   <div className="text-sm font-bold text-slate-900">{currentUser.name}</div>
-                  <div className="text-xs text-emerald-700 font-medium">{currentUser.role} • {currentUser.location}</div>
+                  <div className="text-xs text-emerald-700 font-semibold">{currentUser.role} • {currentUser.location}</div>
                 </div>
               </div>
-              <button 
-                onClick={logout} 
-                className="text-xs text-red-600 bg-white px-2 py-1 rounded border border-red-200"
-              >
-                Logout
-              </button>
+              <span className="text-xs text-emerald-700 font-bold">Pass &gt;</span>
             </div>
+          ) : (
+            <button
+              onClick={() => {
+                setAuthModalOpen(true);
+                setMobileMenuOpen(false);
+              }}
+              className="w-full py-2.5 mb-2 bg-emerald-50 text-emerald-800 font-bold text-xs rounded-xl border border-emerald-200 flex items-center justify-center gap-1.5"
+            >
+              <KeyRound className="w-4 h-4 text-emerald-600" />
+              <span>Sign In with Credentials</span>
+            </button>
           )}
 
           <div className="grid grid-cols-1 gap-1">
@@ -207,63 +267,55 @@ export const Navbar: React.FC = () => {
               <button
                 key={item.view}
                 onClick={() => handleNavClick(item.view)}
-                className={`w-full text-left px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors flex items-center justify-between ${
+                className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-bold transition-colors flex items-center justify-between ${
                   currentView === item.view
-                    ? 'text-emerald-700 bg-emerald-50 font-bold'
+                    ? 'text-emerald-700 bg-emerald-50 font-black'
                     : 'text-slate-700 hover:bg-slate-100'
                 }`}
               >
-                <span>{item.label}</span>
-                <ChevronRight className="w-4 h-4 text-slate-400" />
+                <div className="flex items-center gap-2">
+                  {item.icon}
+                  <span>{item.label}</span>
+                </div>
+                <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
               </button>
             ))}
 
             <button
               onClick={() => handleNavClick('dashboard')}
-              className={`w-full text-left px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors flex items-center justify-between ${
+              className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-bold transition-colors flex items-center justify-between ${
                 currentView === 'dashboard'
-                  ? 'text-emerald-700 bg-emerald-50 font-bold'
+                  ? 'text-emerald-700 bg-emerald-50 font-black'
                   : 'text-slate-700 hover:bg-slate-100'
               }`}
             >
               <div className="flex items-center gap-2">
-                <LayoutDashboard className="w-4 h-4 text-emerald-600" />
-                <span>Storage Dashboard</span>
+                <LayoutDashboard className="w-3.5 h-3.5 text-emerald-600" />
+                <span>Storage Cockpit</span>
               </div>
-              <ChevronRight className="w-4 h-4 text-slate-400" />
+              <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
             </button>
 
             <button
               onClick={() => handleNavClick('admin')}
-              className={`w-full text-left px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors flex items-center justify-between ${
+              className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-bold transition-colors flex items-center justify-between ${
                 currentView === 'admin'
-                  ? 'text-emerald-700 bg-emerald-50 font-bold'
+                  ? 'text-purple-700 bg-purple-50 font-black'
                   : 'text-slate-700 hover:bg-slate-100'
               }`}
             >
               <div className="flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                <span>Cold Hub Operations (Admin)</span>
+                <ShieldCheck className="w-3.5 h-3.5 text-purple-600" />
+                <span>Regional Command (Admin)</span>
               </div>
-              <ChevronRight className="w-4 h-4 text-slate-400" />
+              <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
             </button>
           </div>
 
-          <div className="pt-3 border-t border-slate-100 flex flex-col gap-2">
-            {!currentUser && (
-              <button
-                onClick={() => {
-                  setAuthModalOpen(true);
-                  setMobileMenuOpen(false);
-                }}
-                className="w-full text-center py-2.5 text-sm font-semibold text-slate-700 border border-slate-300 rounded-xl hover:bg-slate-50"
-              >
-                Sign In / Demo Login
-              </button>
-            )}
+          <div className="pt-3 border-t border-slate-100">
             <button
               onClick={() => handleNavClick('book')}
-              className="w-full py-3 bg-emerald-600 text-white font-bold rounded-xl text-center shadow-md shadow-emerald-600/30"
+              className="w-full py-3 bg-emerald-600 text-white font-bold rounded-xl text-center shadow-md shadow-emerald-600/30 text-xs"
             >
               Book Storage (₹500 / crate-day)
             </button>
